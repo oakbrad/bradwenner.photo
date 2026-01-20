@@ -38,10 +38,13 @@
             showCarouselInitial();
         }
 
-        // Small delay then add ready class to enable fade-in
+        // Double rAF ensures browser has painted the hidden state before we reveal
+        // This allows the CSS transition to actually animate
         requestAnimationFrame(function() {
-            container.classList.add('view-ready');
-            isInitialLoad = false;
+            requestAnimationFrame(function() {
+                container.classList.add('view-visible');
+                isInitialLoad = false;
+            });
         });
 
         // Bind events
@@ -113,6 +116,9 @@
         });
     }
 
+    // Transition duration in ms (matches CSS)
+    var FADE_DURATION = 300;
+
     /**
      * Switch to carousel view at specific index
      */
@@ -122,36 +128,44 @@
 
         currentView = 'carousel';
 
-        // Update classes
-        container.classList.remove('view-grid');
-        container.classList.add('view-carousel');
+        // Fade out current view
+        container.classList.remove('view-visible');
 
-        // Update ARIA
-        carousel.setAttribute('aria-hidden', 'false');
-        grid.setAttribute('aria-hidden', 'true');
+        // After fade out completes, switch view and fade in
+        setTimeout(function() {
+            // Switch view classes
+            container.classList.remove('view-grid');
+            container.classList.add('view-carousel');
 
-        // Update URL hash (remove #grid)
-        if (window.location.hash === '#grid') {
-            history.pushState(null, '', window.location.pathname);
-        }
+            // Update ARIA
+            carousel.setAttribute('aria-hidden', 'false');
+            grid.setAttribute('aria-hidden', 'true');
 
-        // Scroll to specific image
-        var targetSlide = slides[index];
-        if (targetSlide) {
-            // Small delay to allow view transition to complete
-            setTimeout(function() {
+            // Position carousel to target image (instant, while hidden)
+            var targetSlide = slides[index];
+            if (targetSlide) {
                 targetSlide.scrollIntoView({
                     behavior: 'instant',
                     block: 'nearest',
                     inline: 'center'
                 });
-            }, 50);
-        }
+            }
 
-        // Notify portfolio.js of view change
-        window.dispatchEvent(new CustomEvent('portfolio:viewchange', {
-            detail: { view: 'carousel', index: index }
-        }));
+            // Update URL hash (remove #grid)
+            if (window.location.hash === '#grid') {
+                history.pushState(null, '', window.location.pathname);
+            }
+
+            // Fade in new view
+            requestAnimationFrame(function() {
+                container.classList.add('view-visible');
+            });
+
+            // Notify portfolio.js of view change
+            window.dispatchEvent(new CustomEvent('portfolio:viewchange', {
+                detail: { view: 'carousel', index: index }
+            }));
+        }, FADE_DURATION);
     }
 
     /**
@@ -179,36 +193,44 @@
 
         currentView = 'grid';
 
-        // Update classes
-        container.classList.remove('view-carousel');
-        container.classList.add('view-grid');
+        // Fade out current view
+        container.classList.remove('view-visible');
 
-        // Update ARIA
-        carousel.setAttribute('aria-hidden', 'true');
-        grid.setAttribute('aria-hidden', 'false');
+        // After fade out completes, switch view and fade in
+        setTimeout(function() {
+            // Switch view classes
+            container.classList.remove('view-carousel');
+            container.classList.add('view-grid');
 
-        // Update URL hash
-        if (window.location.hash !== '#grid') {
-            history.pushState(null, '', window.location.pathname + '#grid');
-        }
+            // Update ARIA
+            carousel.setAttribute('aria-hidden', 'true');
+            grid.setAttribute('aria-hidden', 'false');
 
-        // Scroll grid to show the image they were viewing
-        var gridItems = grid.querySelectorAll('.portfolio-grid-item');
-        var targetGridItem = gridItems[currentIndex];
-        if (targetGridItem) {
-            // Small delay to allow view transition
-            setTimeout(function() {
+            // Update URL hash
+            if (window.location.hash !== '#grid') {
+                history.pushState(null, '', window.location.pathname + '#grid');
+            }
+
+            // Position grid to target image BEFORE fading in (instant, while hidden)
+            var gridItems = grid.querySelectorAll('.portfolio-grid-item');
+            var targetGridItem = gridItems[currentIndex];
+            if (targetGridItem) {
                 targetGridItem.scrollIntoView({
-                    behavior: 'smooth',
+                    behavior: 'instant',
                     block: 'center'
                 });
-            }, 50);
-        }
+            }
 
-        // Notify portfolio.js of view change
-        window.dispatchEvent(new CustomEvent('portfolio:viewchange', {
-            detail: { view: 'grid' }
-        }));
+            // Now fade in the properly positioned view
+            requestAnimationFrame(function() {
+                container.classList.add('view-visible');
+            });
+
+            // Notify portfolio.js of view change
+            window.dispatchEvent(new CustomEvent('portfolio:viewchange', {
+                detail: { view: 'grid' }
+            }));
+        }, FADE_DURATION);
     }
 
     /**

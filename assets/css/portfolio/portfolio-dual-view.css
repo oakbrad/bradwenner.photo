@@ -3,25 +3,42 @@
    ========================================================================== */
 
 /* ==========================================================================
-   Initial State - Hide everything until JS determines which view to show
+   Base State - All elements start hidden for initial fade-in
    ========================================================================== */
 
 .portfolio-dual-container .portfolio-gallery,
 .portfolio-dual-container .portfolio-grid,
 .portfolio-dual-container .portfolio-close-btn {
     opacity: 0;
-    visibility: hidden;
-}
-
-/* Ready state - JS has determined the view, enable transitions */
-.portfolio-dual-container.view-ready .portfolio-gallery,
-.portfolio-dual-container.view-ready .portfolio-grid,
-.portfolio-dual-container.view-ready .portfolio-close-btn {
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    transition: opacity 0.3s ease-out;
 }
 
 /* ==========================================================================
-   View State Classes
+   View Visible State - Reveal the active view
+   ========================================================================== */
+
+/* Grid view: show grid, hide carousel and close button */
+.portfolio-dual-container.view-visible.view-grid .portfolio-grid {
+    opacity: 1;
+}
+
+.portfolio-dual-container.view-visible.view-grid .portfolio-gallery,
+.portfolio-dual-container.view-visible.view-grid .portfolio-close-btn {
+    opacity: 0;
+}
+
+/* Carousel view: show carousel and close button, hide grid */
+.portfolio-dual-container.view-visible.view-carousel .portfolio-gallery,
+.portfolio-dual-container.view-visible.view-carousel .portfolio-close-btn {
+    opacity: 1;
+}
+
+.portfolio-dual-container.view-visible.view-carousel .portfolio-grid {
+    opacity: 0;
+}
+
+/* ==========================================================================
+   Display Control - Show/hide based on view (after fade completes)
    ========================================================================== */
 
 /* Grid view active */
@@ -31,8 +48,6 @@
 
 .portfolio-dual-container.view-grid .portfolio-grid {
     display: block;
-    opacity: 1;
-    visibility: visible;
 }
 
 .portfolio-dual-container.view-grid .portfolio-close-btn {
@@ -42,8 +57,6 @@
 /* Carousel view active */
 .portfolio-dual-container.view-carousel .portfolio-gallery {
     display: flex;
-    opacity: 1;
-    visibility: visible;
 }
 
 .portfolio-dual-container.view-carousel .portfolio-grid {
@@ -52,8 +65,6 @@
 
 .portfolio-dual-container.view-carousel .portfolio-close-btn {
     display: flex;
-    opacity: 1;
-    visibility: visible;
 }
 
 /* ==========================================================================
@@ -79,7 +90,7 @@
     border-radius: 50%;
     cursor: pointer;
 
-    transition: background-color 0.2s ease, transform 0.2s ease;
+    transition: background-color 0.2s ease, transform 0.2s ease, opacity 0.3s ease-out;
 }
 
 .portfolio-close-btn:hover {
