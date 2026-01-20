@@ -169,7 +169,7 @@
             columnWidth: '.portfolio-grid-sizer',
             percentPosition: true,
             horizontalOrder: true,  // Prioritize left-to-right ordering
-            gutter: 24,
+            gutter: 32,
             transitionDuration: 0  // No animation on initial layout
         });
 

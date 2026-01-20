@@ -129,12 +129,14 @@
    ========================================================================== */
 
 .portfolio-grid {
-    --portfolio-grid-gap: 24px;
+    --portfolio-grid-gap: 32px; /* Space between images */
+    --portfolio-grid-padding: 24px; /* Padding around the grid */
 
     display: none;
-    max-width: calc(1800px + var(--portfolio-grid-gap) * 2); /* Account for padding */
+    max-width: calc(1800px + var(--portfolio-grid-padding) * 2);
     margin: 0 auto;
-    padding: 20px var(--portfolio-grid-gap) var(--portfolio-grid-gap); /* Top aligned with carousel */
+    padding: var(--portfolio-grid-padding);
+    padding-top: 20px; /* Top aligned with carousel */
     box-sizing: border-box;
 }
 
@@ -165,15 +167,16 @@
     display: block;
 }
 
-/* Responsive: 1 column on mobile */
+/* Responsive: 1 column on mobile - full bleed, edge-to-edge images */
 @media (max-width: 767px) {
     .portfolio-grid {
-        padding: var(--portfolio-grid-gap); /* Equal padding all sides */
+        padding: 0; /* No padding, full bleed */
     }
 
     .portfolio-grid-sizer,
     .portfolio-grid-item {
         width: 100%;
+        margin-bottom: 0; /* No gap between images */
     }
 }
 
