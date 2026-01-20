@@ -129,7 +129,7 @@
    ========================================================================== */
 
 .portfolio-grid {
-    --portfolio-grid-gap: var(--grid-gap, 16px);
+    --portfolio-grid-gap: 24px;
 
     display: none;
     max-width: calc(1800px + var(--portfolio-grid-gap) * 2); /* Account for padding */

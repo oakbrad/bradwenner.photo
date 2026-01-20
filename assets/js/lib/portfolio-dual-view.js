@@ -132,6 +132,11 @@
      * Uses horizontalOrder to maintain left-to-right sequence
      */
     function initMasonry() {
+        // Guard: don't init if already exists
+        if (masonryInstance) {
+            return;
+        }
+
         if (typeof Masonry === 'undefined') {
             console.warn('Masonry.js not loaded');
             return;
@@ -139,7 +144,8 @@
 
         // Wait for images to load before initializing Masonry
         if (typeof imagesLoaded !== 'undefined') {
-            imagesLoaded(grid, function() {
+            var imgLoad = imagesLoaded(grid);
+            imgLoad.once('always', function() {
                 createMasonryInstance();
             });
         } else {
@@ -152,9 +158,10 @@
      * Create the Masonry instance
      */
     function createMasonryInstance() {
-        // Read gutter from CSS variable (falls back to 16px if not set)
-        var gridStyles = getComputedStyle(grid);
-        var gutter = parseInt(gridStyles.getPropertyValue('--portfolio-grid-gap'), 10) || 16;
+        // Guard: don't create if already exists
+        if (masonryInstance) {
+            return;
+        }
 
         // Create with transitions disabled for initial layout
         masonryInstance = new Masonry(grid, {
@@ -162,7 +169,7 @@
             columnWidth: '.portfolio-grid-sizer',
             percentPosition: true,
             horizontalOrder: true,  // Prioritize left-to-right ordering
-            gutter: gutter,
+            gutter: 24,
             transitionDuration: 0  // No animation on initial layout
         });
 
@@ -303,19 +310,25 @@
             // Initialize Masonry if this is the first time showing grid
             // Otherwise just refresh the existing layout
             if (!masonryInstance) {
-                // First time: need to init Masonry with images loaded
-                if (typeof Masonry !== 'undefined' && typeof imagesLoaded !== 'undefined') {
-                    imagesLoaded(grid, function() {
-                        createMasonryInstance();
-                        positionAndFadeIn();
+                // First time: wait for grid to be rendered, then init Masonry
+                // Double rAF ensures the display:block has taken effect
+                requestAnimationFrame(function() {
+                    requestAnimationFrame(function() {
+                        if (typeof Masonry !== 'undefined' && typeof imagesLoaded !== 'undefined') {
+                            var imgLoad = imagesLoaded(grid);
+                            imgLoad.once('always', function() {
+                                createMasonryInstance();
+                                positionAndFadeIn();
+                            });
+                        } else if (typeof Masonry !== 'undefined') {
+                            createMasonryInstance();
+                            positionAndFadeIn();
+                        } else {
+                            // No Masonry available, just show grid
+                            positionAndFadeIn();
+                        }
                     });
-                } else if (typeof Masonry !== 'undefined') {
-                    createMasonryInstance();
-                    positionAndFadeIn();
-                } else {
-                    // No Masonry available, just show grid
-                    positionAndFadeIn();
-                }
+                });
             } else {
                 // Masonry already initialized, just refresh layout
                 refreshMasonry();
