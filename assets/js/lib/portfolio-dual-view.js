@@ -32,9 +32,6 @@
         // Build grid from carousel images
         buildGrid();
 
-        // Initialize Masonry for grid layout
-        initMasonry();
-
         // Determine initial view based on hash (without updating URL)
         if (window.location.hash === '#grid') {
             showGridInitial();
@@ -49,9 +46,9 @@
                 container.classList.add('view-visible');
                 isInitialLoad = false;
 
-                // If starting in grid view, refresh Masonry after visible
+                // If starting in grid view, initialize Masonry now that it's visible
                 if (currentView === 'grid') {
-                    refreshMasonry();
+                    initMasonry();
                 }
             });
         });
@@ -155,15 +152,19 @@
      * Create the Masonry instance
      */
     function createMasonryInstance() {
+        // Create with transitions disabled for initial layout
         masonryInstance = new Masonry(grid, {
             itemSelector: '.portfolio-grid-item',
             columnWidth: '.portfolio-grid-sizer',
             percentPosition: true,
             horizontalOrder: true,  // Prioritize left-to-right ordering
             gutter: 24,
-            resize: true,  // Let Masonry handle resize natively
-            transitionDuration: '0.6s',  // Smooth repositioning on resize
-            stagger: '0.3s'  // Staggered animation for items
+            transitionDuration: 0  // No animation on initial layout
+        });
+
+        // After initial layout completes, enable transitions for future resizes
+        masonryInstance.once('layoutComplete', function() {
+            masonryInstance.options.transitionDuration = '0.4s';
         });
     }
 
@@ -272,28 +273,50 @@
                 history.pushState(null, '', window.location.pathname + '#grid');
             }
 
-            // Refresh Masonry layout, then position and fade in
-            refreshMasonry();
+            // Helper to position and fade in
+            function positionAndFadeIn() {
+                // Position grid to target image BEFORE fading in
+                var gridItems = grid.querySelectorAll('.portfolio-grid-item');
+                var targetGridItem = gridItems[currentIndex];
+                if (targetGridItem) {
+                    targetGridItem.scrollIntoView({
+                        behavior: 'instant',
+                        block: 'center'
+                    });
+                }
 
-            // Position grid to target image BEFORE fading in
-            var gridItems = grid.querySelectorAll('.portfolio-grid-item');
-            var targetGridItem = gridItems[currentIndex];
-            if (targetGridItem) {
-                targetGridItem.scrollIntoView({
-                    behavior: 'instant',
-                    block: 'center'
+                // Fade in new view
+                requestAnimationFrame(function() {
+                    container.classList.add('view-visible');
                 });
+
+                // Notify portfolio.js of view change
+                window.dispatchEvent(new CustomEvent('portfolio:viewchange', {
+                    detail: { view: 'grid' }
+                }));
             }
 
-            // Fade in new view
-            requestAnimationFrame(function() {
-                container.classList.add('view-visible');
-            });
-
-            // Notify portfolio.js of view change
-            window.dispatchEvent(new CustomEvent('portfolio:viewchange', {
-                detail: { view: 'grid' }
-            }));
+            // Initialize Masonry if this is the first time showing grid
+            // Otherwise just refresh the existing layout
+            if (!masonryInstance) {
+                // First time: need to init Masonry with images loaded
+                if (typeof Masonry !== 'undefined' && typeof imagesLoaded !== 'undefined') {
+                    imagesLoaded(grid, function() {
+                        createMasonryInstance();
+                        positionAndFadeIn();
+                    });
+                } else if (typeof Masonry !== 'undefined') {
+                    createMasonryInstance();
+                    positionAndFadeIn();
+                } else {
+                    // No Masonry available, just show grid
+                    positionAndFadeIn();
+                }
+            } else {
+                // Masonry already initialized, just refresh layout
+                refreshMasonry();
+                positionAndFadeIn();
+            }
         }, FADE_DURATION);
     }
 
