@@ -73,7 +73,7 @@
 
 .portfolio-close-btn {
     position: fixed;
-    top: 100px;
+    top: 92px; /* Below header, aligned with content */
     right: 24px;
     z-index: 100;
 
@@ -112,7 +112,7 @@
 /* Mobile adjustments */
 @media (max-width: 767px) {
     .portfolio-close-btn {
-        top: 80px;
+        top: 72px; /* Smaller header on mobile */
         right: 16px;
         width: 40px;
         height: 40px;
@@ -130,10 +130,10 @@
 
 .portfolio-grid {
     display: none;
-    max-width: 1800px;
+    max-width: calc(1800px + 48px); /* Account for padding */
     margin: 0 auto;
-    padding: 24px;
-    padding-top: 100px;
+    padding: 20px 24px 24px; /* Top aligned with carousel */
+    box-sizing: border-box;
 }
 
 /* Grid sizer determines column width for Masonry */
@@ -166,8 +166,7 @@
 /* Responsive: 1 column on mobile */
 @media (max-width: 767px) {
     .portfolio-grid {
-        padding: 16px;
-        padding-top: 80px;
+        padding: 16px; /* Equal padding all sides */
     }
 
     .portfolio-grid-sizer,
