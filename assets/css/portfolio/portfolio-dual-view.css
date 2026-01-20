@@ -130,14 +130,21 @@
 
 .portfolio-grid {
     --portfolio-grid-gap: 32px; /* Space between images */
-    --portfolio-grid-padding: 24px; /* Padding around the grid */
+    --portfolio-grid-margin: 24px; /* Margin around the grid */
 
     display: none;
-    max-width: calc(1800px + var(--portfolio-grid-padding) * 2);
-    margin: 0 auto;
-    padding: var(--portfolio-grid-padding);
+    max-width: 1800px;
+    margin: 0 var(--portfolio-grid-margin); /* Use margin instead of padding for symmetry */
     padding-top: 20px; /* Top aligned with carousel */
     box-sizing: border-box;
+}
+
+/* Center on very wide screens */
+@media (min-width: 1848px) {
+    .portfolio-grid {
+        margin-left: auto;
+        margin-right: auto;
+    }
 }
 
 /* Grid sizer determines column width for Masonry */
@@ -145,6 +152,11 @@
 .portfolio-grid-item {
     /* 3 columns with gutter: (100% - gutter*2) / 3 */
     width: calc((100% - var(--portfolio-grid-gap) * 2) / 3);
+}
+
+/* Gutter sizer for Masonry - ensures gutters match CSS variable */
+.portfolio-gutter-sizer {
+    width: var(--portfolio-grid-gap);
 }
 
 .portfolio-grid-item {
@@ -170,7 +182,9 @@
 /* Responsive: 1 column on mobile - full bleed, edge-to-edge images */
 @media (max-width: 767px) {
     .portfolio-grid {
-        padding: 0; /* No padding, full bleed */
+        margin-left: 0;
+        margin-right: 0;
+        padding-top: 0;
     }
 
     .portfolio-grid-sizer,

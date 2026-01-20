@@ -101,6 +101,11 @@
         gridSizer.className = 'portfolio-grid-sizer';
         grid.appendChild(gridSizer);
 
+        // Add gutter sizer for Masonry gutter calculation
+        var gutterSizer = document.createElement('div');
+        gutterSizer.className = 'portfolio-gutter-sizer';
+        grid.appendChild(gutterSizer);
+
         slides.forEach(function(slide, index) {
             var img = slide.querySelector('img');
 
@@ -172,9 +177,9 @@
         masonryInstance = new Masonry(grid, {
             itemSelector: '.portfolio-grid-item',
             columnWidth: '.portfolio-grid-sizer',
+            gutter: '.portfolio-gutter-sizer',  // Use element for consistent CSS-based gutters
             percentPosition: true,
             horizontalOrder: true,  // Prioritize left-to-right ordering
-            gutter: 32,
             transitionDuration: 0  // No animation on initial layout
         });
 
