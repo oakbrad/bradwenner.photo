@@ -152,13 +152,17 @@
      * Create the Masonry instance
      */
     function createMasonryInstance() {
+        // Read gutter from CSS variable (falls back to 16px if not set)
+        var gridStyles = getComputedStyle(grid);
+        var gutter = parseInt(gridStyles.getPropertyValue('--portfolio-grid-gap'), 10) || 16;
+
         // Create with transitions disabled for initial layout
         masonryInstance = new Masonry(grid, {
             itemSelector: '.portfolio-grid-item',
             columnWidth: '.portfolio-grid-sizer',
             percentPosition: true,
             horizontalOrder: true,  // Prioritize left-to-right ordering
-            gutter: 24,
+            gutter: gutter,
             transitionDuration: 0  // No animation on initial layout
         });
 

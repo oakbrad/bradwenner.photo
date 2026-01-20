@@ -129,22 +129,24 @@
    ========================================================================== */
 
 .portfolio-grid {
+    --portfolio-grid-gap: var(--grid-gap, 16px);
+
     display: none;
-    max-width: calc(1800px + 48px); /* Account for padding */
+    max-width: calc(1800px + var(--portfolio-grid-gap) * 2); /* Account for padding */
     margin: 0 auto;
-    padding: 20px 24px 24px; /* Top aligned with carousel */
+    padding: 20px var(--portfolio-grid-gap) var(--portfolio-grid-gap); /* Top aligned with carousel */
     box-sizing: border-box;
 }
 
 /* Grid sizer determines column width for Masonry */
 .portfolio-grid-sizer,
 .portfolio-grid-item {
-    /* 3 columns with 24px gutter: (100% - 48px) / 3 */
-    width: calc((100% - 48px) / 3);
+    /* 3 columns with gutter: (100% - gutter*2) / 3 */
+    width: calc((100% - var(--portfolio-grid-gap) * 2) / 3);
 }
 
 .portfolio-grid-item {
-    margin-bottom: 24px;
+    margin-bottom: var(--portfolio-grid-gap);
     cursor: pointer;
 }
 
@@ -166,16 +168,12 @@
 /* Responsive: 1 column on mobile */
 @media (max-width: 767px) {
     .portfolio-grid {
-        padding: 16px; /* Equal padding all sides */
+        padding: var(--portfolio-grid-gap); /* Equal padding all sides */
     }
 
     .portfolio-grid-sizer,
     .portfolio-grid-item {
         width: 100%;
-    }
-
-    .portfolio-grid-item {
-        margin-bottom: 16px;
     }
 }
 
@@ -183,8 +181,8 @@
 @media (min-width: 768px) and (max-width: 1199px) {
     .portfolio-grid-sizer,
     .portfolio-grid-item {
-        /* 2 columns with 24px gutter: (100% - 24px) / 2 */
-        width: calc((100% - 24px) / 2);
+        /* 2 columns with gutter */
+        width: calc((100% - var(--portfolio-grid-gap)) / 2);
     }
 }
 
@@ -192,7 +190,7 @@
 @media (min-width: 1200px) {
     .portfolio-grid-sizer,
     .portfolio-grid-item {
-        width: calc((100% - 48px) / 3);
+        width: calc((100% - var(--portfolio-grid-gap) * 2) / 3);
     }
 }
 
