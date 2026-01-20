@@ -18,6 +18,7 @@
     // State
     var currentView = 'carousel';
     var totalSlides = slides.length;
+    var masonryInstance = null;
 
     // Track if this is the initial load (for fade-in behavior)
     var isInitialLoad = true;
@@ -30,6 +31,9 @@
 
         // Build grid from carousel images
         buildGrid();
+
+        // Initialize Masonry for grid layout
+        initMasonry();
 
         // Determine initial view based on hash (without updating URL)
         if (window.location.hash === '#grid') {
@@ -44,6 +48,11 @@
             requestAnimationFrame(function() {
                 container.classList.add('view-visible');
                 isInitialLoad = false;
+
+                // If starting in grid view, refresh Masonry after visible
+                if (currentView === 'grid') {
+                    refreshMasonry();
+                }
             });
         });
 
@@ -85,6 +94,11 @@
      * Build grid view by cloning carousel images (no captions)
      */
     function buildGrid() {
+        // Add grid sizer for Masonry column width calculation
+        var gridSizer = document.createElement('div');
+        gridSizer.className = 'portfolio-grid-sizer';
+        grid.appendChild(gridSizer);
+
         slides.forEach(function(slide, index) {
             var img = slide.querySelector('img');
 
@@ -114,6 +128,53 @@
             gridItem.appendChild(thumbImg);
             grid.appendChild(gridItem);
         });
+    }
+
+    /**
+     * Initialize Masonry layout for grid view
+     * Uses horizontalOrder to maintain left-to-right sequence
+     */
+    function initMasonry() {
+        if (typeof Masonry === 'undefined') {
+            console.warn('Masonry.js not loaded');
+            return;
+        }
+
+        // Wait for images to load before initializing Masonry
+        if (typeof imagesLoaded !== 'undefined') {
+            imagesLoaded(grid, function() {
+                createMasonryInstance();
+            });
+        } else {
+            // Fallback if imagesLoaded not available
+            createMasonryInstance();
+        }
+    }
+
+    /**
+     * Create the Masonry instance
+     */
+    function createMasonryInstance() {
+        masonryInstance = new Masonry(grid, {
+            itemSelector: '.portfolio-grid-item',
+            columnWidth: '.portfolio-grid-sizer',
+            percentPosition: true,
+            horizontalOrder: true,  // Prioritize left-to-right ordering
+            gutter: 24,
+            resize: true,  // Let Masonry handle resize natively
+            transitionDuration: '0.6s',  // Smooth repositioning on resize
+            stagger: '0.3s'  // Staggered animation for items
+        });
+    }
+
+    /**
+     * Refresh Masonry layout (call after view switch)
+     */
+    function refreshMasonry() {
+        if (!masonryInstance) return;
+
+        // Need to re-layout after display changes
+        masonryInstance.layout();
     }
 
     // Transition duration in ms (matches CSS)
@@ -211,7 +272,10 @@
                 history.pushState(null, '', window.location.pathname + '#grid');
             }
 
-            // Position grid to target image BEFORE fading in (instant, while hidden)
+            // Refresh Masonry layout, then position and fade in
+            refreshMasonry();
+
+            // Position grid to target image BEFORE fading in
             var gridItems = grid.querySelectorAll('.portfolio-grid-item');
             var targetGridItem = gridItems[currentIndex];
             if (targetGridItem) {
@@ -221,7 +285,7 @@
                 });
             }
 
-            // Now fade in the properly positioned view
+            // Fade in new view
             requestAnimationFrame(function() {
                 container.classList.add('view-visible');
             });

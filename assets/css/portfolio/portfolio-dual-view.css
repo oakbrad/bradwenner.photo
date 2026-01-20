@@ -125,7 +125,7 @@
 }
 
 /* ==========================================================================
-   Grid View
+   Grid View - Masonry layout with horizontal ordering
    ========================================================================== */
 
 .portfolio-grid {
@@ -134,21 +134,22 @@
     margin: 0 auto;
     padding: 24px;
     padding-top: 100px;
+}
 
-    /* CSS columns for masonry effect - max 3 columns */
-    column-count: 3;
-    column-gap: 24px;
+/* Grid sizer determines column width for Masonry */
+.portfolio-grid-sizer,
+.portfolio-grid-item {
+    /* 3 columns with 24px gutter: (100% - 48px) / 3 */
+    width: calc((100% - 48px) / 3);
 }
 
 .portfolio-grid-item {
-    break-inside: avoid;
     margin-bottom: 24px;
     cursor: pointer;
-    transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
 .portfolio-grid-item:hover {
-    transform: scale(1.01);
+    opacity: 0.85;
 }
 
 .portfolio-grid-item:focus {
@@ -162,13 +163,16 @@
     display: block;
 }
 
-/* Responsive grid columns: 1 to 3 */
+/* Responsive: 1 column on mobile */
 @media (max-width: 767px) {
     .portfolio-grid {
-        column-count: 1;
-        column-gap: 16px;
         padding: 16px;
         padding-top: 80px;
+    }
+
+    .portfolio-grid-sizer,
+    .portfolio-grid-item {
+        width: 100%;
     }
 
     .portfolio-grid-item {
@@ -176,15 +180,20 @@
     }
 }
 
+/* Responsive: 2 columns on tablet */
 @media (min-width: 768px) and (max-width: 1199px) {
-    .portfolio-grid {
-        column-count: 2;
+    .portfolio-grid-sizer,
+    .portfolio-grid-item {
+        /* 2 columns with 24px gutter: (100% - 24px) / 2 */
+        width: calc((100% - 24px) / 2);
     }
 }
 
+/* Responsive: 3 columns on desktop (default above) */
 @media (min-width: 1200px) {
-    .portfolio-grid {
-        column-count: 3;
+    .portfolio-grid-sizer,
+    .portfolio-grid-item {
+        width: calc((100% - 48px) / 3);
     }
 }
 
