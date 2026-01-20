@@ -19,6 +19,9 @@
     var currentView = 'carousel';
     var totalSlides = slides.length;
 
+    // Track if this is the initial load (for fade-in behavior)
+    var isInitialLoad = true;
+
     /**
      * Initialize dual-view functionality
      */
@@ -28,11 +31,51 @@
         // Build grid from carousel images
         buildGrid();
 
-        // Check initial hash
-        handleHashChange();
+        // Determine initial view based on hash (without updating URL)
+        if (window.location.hash === '#grid') {
+            showGridInitial();
+        } else {
+            showCarouselInitial();
+        }
+
+        // Small delay then add ready class to enable fade-in
+        requestAnimationFrame(function() {
+            container.classList.add('view-ready');
+            isInitialLoad = false;
+        });
 
         // Bind events
         bindEvents();
+    }
+
+    /**
+     * Initial carousel show - no URL manipulation, no scrollIntoView delay
+     */
+    function showCarouselInitial() {
+        currentView = 'carousel';
+        container.classList.add('view-carousel');
+        carousel.setAttribute('aria-hidden', 'false');
+        grid.setAttribute('aria-hidden', 'true');
+
+        // Scroll to first image immediately (no delay needed on initial load)
+        var firstSlide = slides[0];
+        if (firstSlide) {
+            firstSlide.scrollIntoView({
+                behavior: 'instant',
+                block: 'nearest',
+                inline: 'center'
+            });
+        }
+    }
+
+    /**
+     * Initial grid show - no URL manipulation
+     */
+    function showGridInitial() {
+        currentView = 'grid';
+        container.classList.add('view-grid');
+        carousel.setAttribute('aria-hidden', 'true');
+        grid.setAttribute('aria-hidden', 'false');
     }
 
     /**
@@ -169,9 +212,12 @@
     }
 
     /**
-     * Handle URL hash changes (back/forward buttons)
+     * Handle URL hash changes (back/forward buttons only, not initial load)
      */
     function handleHashChange() {
+        // Skip if this is somehow called during initial load
+        if (isInitialLoad) return;
+
         if (window.location.hash === '#grid') {
             showGrid();
         } else {
