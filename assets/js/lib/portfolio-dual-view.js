@@ -112,9 +112,28 @@
     }
 
     /**
-     * Switch to grid view
+     * Get current carousel index from scroll position
+     */
+    function getCurrentCarouselIndex() {
+        var carouselRect = carousel.getBoundingClientRect();
+        var centerX = carouselRect.left + carouselRect.width / 2;
+
+        for (var i = 0; i < totalSlides; i++) {
+            var slideRect = slides[i].getBoundingClientRect();
+            if (slideRect.left <= centerX && slideRect.right >= centerX) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Switch to grid view, centering on current carousel image
      */
     function showGrid() {
+        // Get current carousel position before switching
+        var currentIndex = getCurrentCarouselIndex();
+
         currentView = 'grid';
 
         // Update classes
@@ -130,8 +149,18 @@
             history.pushState(null, '', window.location.pathname + '#grid');
         }
 
-        // Scroll to top of grid
-        window.scrollTo(0, 0);
+        // Scroll grid to show the image they were viewing
+        var gridItems = grid.querySelectorAll('.portfolio-grid-item');
+        var targetGridItem = gridItems[currentIndex];
+        if (targetGridItem) {
+            // Small delay to allow view transition
+            setTimeout(function() {
+                targetGridItem.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            }, 50);
+        }
 
         // Notify portfolio.js of view change
         window.dispatchEvent(new CustomEvent('portfolio:viewchange', {
