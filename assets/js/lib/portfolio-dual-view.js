@@ -1,6 +1,10 @@
 /**
- * Portfolio Dual View - Carousel + Grid mode
+ * Portfolio Dual View - Grid (default) + Carousel/Book mode
  * Handles view switching, URL hash, and navigation between views
+ *
+ * URL hashes:
+ *   (none) or #grid - Grid view (default)
+ *   #book - Carousel/book view
  */
 (function() {
     'use strict';
@@ -33,10 +37,11 @@
         buildGrid();
 
         // Determine initial view based on hash (without updating URL)
-        if (window.location.hash === '#grid') {
-            showGridInitial();
-        } else {
+        // Grid is the default; #book shows carousel
+        if (window.location.hash === '#book') {
             showCarouselInitial();
+        } else {
+            showGridInitial();
         }
 
         // Double rAF ensures browser has painted the hidden state before we reveal
@@ -224,9 +229,9 @@
                 });
             }
 
-            // Update URL hash (remove #grid)
-            if (window.location.hash === '#grid') {
-                history.pushState(null, '', window.location.pathname);
+            // Update URL hash to #book
+            if (window.location.hash !== '#book') {
+                history.pushState(null, '', window.location.pathname + '#book');
             }
 
             // Fade in new view
@@ -279,9 +284,9 @@
             carousel.setAttribute('aria-hidden', 'true');
             grid.setAttribute('aria-hidden', 'false');
 
-            // Update URL hash
-            if (window.location.hash !== '#grid') {
-                history.pushState(null, '', window.location.pathname + '#grid');
+            // Update URL hash (remove #book, go back to default)
+            if (window.location.hash === '#book') {
+                history.pushState(null, '', window.location.pathname);
             }
 
             // Helper to position and fade in
@@ -344,10 +349,11 @@
         // Skip if this is somehow called during initial load
         if (isInitialLoad) return;
 
-        if (window.location.hash === '#grid') {
-            showGrid();
-        } else {
+        if (window.location.hash === '#book') {
             showCarousel(0);
+        } else {
+            // Default to grid (no hash, #grid, or any other hash)
+            showGrid();
         }
     }
 
