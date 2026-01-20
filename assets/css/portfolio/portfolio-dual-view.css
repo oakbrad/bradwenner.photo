@@ -1,0 +1,167 @@
+/* ==========================================================================
+   Portfolio Dual View - Carousel + Grid Mode
+   ========================================================================== */
+
+/* ==========================================================================
+   View State Classes
+   ========================================================================== */
+
+/* Grid view active */
+.portfolio-dual-container.view-grid .portfolio-gallery {
+    display: none;
+}
+
+.portfolio-dual-container.view-grid .portfolio-grid {
+    display: block;
+}
+
+.portfolio-dual-container.view-grid .portfolio-close-btn {
+    display: none;
+}
+
+/* Carousel view active */
+.portfolio-dual-container.view-carousel .portfolio-gallery {
+    display: flex;
+}
+
+.portfolio-dual-container.view-carousel .portfolio-grid {
+    display: none;
+}
+
+.portfolio-dual-container.view-carousel .portfolio-close-btn {
+    display: flex;
+}
+
+/* ==========================================================================
+   Close Button
+   ========================================================================== */
+
+.portfolio-close-btn {
+    position: fixed;
+    top: 100px;
+    right: 24px;
+    z-index: 100;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    width: 44px;
+    height: 44px;
+    padding: 0;
+
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    cursor: pointer;
+
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.portfolio-close-btn:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: scale(1.05);
+}
+
+.portfolio-close-btn:focus {
+    outline: 2px solid var(--color-primary-text);
+    outline-offset: 2px;
+}
+
+.portfolio-close-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: var(--color-primary-text);
+}
+
+/* Mobile adjustments */
+@media (max-width: 767px) {
+    .portfolio-close-btn {
+        top: 80px;
+        right: 16px;
+        width: 40px;
+        height: 40px;
+    }
+
+    .portfolio-close-btn svg {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+/* ==========================================================================
+   Grid View
+   ========================================================================== */
+
+.portfolio-grid {
+    display: none;
+    max-width: 1800px;
+    margin: 0 auto;
+    padding: 24px;
+    padding-top: 100px;
+
+    /* CSS columns for masonry effect - max 3 columns */
+    column-count: 3;
+    column-gap: 24px;
+}
+
+.portfolio-grid-item {
+    break-inside: avoid;
+    margin-bottom: 24px;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.portfolio-grid-item:hover {
+    transform: scale(1.01);
+}
+
+.portfolio-grid-item:focus {
+    outline: 2px solid var(--color-primary-text);
+    outline-offset: 2px;
+}
+
+.portfolio-grid-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Responsive grid columns: 1 to 3 */
+@media (max-width: 767px) {
+    .portfolio-grid {
+        column-count: 1;
+        column-gap: 16px;
+        padding: 16px;
+        padding-top: 80px;
+    }
+
+    .portfolio-grid-item {
+        margin-bottom: 16px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+    .portfolio-grid {
+        column-count: 2;
+    }
+}
+
+@media (min-width: 1200px) {
+    .portfolio-grid {
+        column-count: 3;
+    }
+}
+
+/* ==========================================================================
+   Grid View - Override Fixed Positioning
+   ========================================================================== */
+
+/* Override fixed positioning when in grid view so page scrolls normally */
+.portfolio-dual-container.view-grid {
+    position: relative;
+    top: auto;
+    bottom: auto;
+    overflow: visible;
+    min-height: calc(100vh - 80px);
+}

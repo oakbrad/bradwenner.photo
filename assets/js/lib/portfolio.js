@@ -212,6 +212,14 @@
 
         // Keyboard navigation
         document.addEventListener('keydown', handleKeydown);
+
+        // Listen for view changes from dual-view module
+        window.addEventListener('portfolio:viewchange', function(e) {
+            if (e.detail.view === 'carousel' && typeof e.detail.index === 'number') {
+                currentIndex = e.detail.index;
+                preloadAdjacent(currentIndex);
+            }
+        });
     }
 
     // Initialize when DOM is ready
