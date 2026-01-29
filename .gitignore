@@ -1,3 +1,4 @@
 node_modules
 yarn.lock
 dist/edge.zip
+.claude/web-portfolio-best-practices.md
