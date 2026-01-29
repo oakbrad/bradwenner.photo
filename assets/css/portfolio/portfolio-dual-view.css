@@ -1,0 +1,225 @@
+/* ==========================================================================
+   Portfolio Dual View - Carousel + Grid Mode
+   ========================================================================== */
+
+/* ==========================================================================
+   Base State - All elements start hidden for initial fade-in
+   ========================================================================== */
+
+.portfolio-dual-container .portfolio-gallery,
+.portfolio-dual-container .portfolio-grid,
+.portfolio-dual-container .portfolio-close-btn {
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
+}
+
+/* ==========================================================================
+   View Visible State - Reveal the active view
+   ========================================================================== */
+
+/* Grid view: show grid, hide carousel and close button */
+.portfolio-dual-container.view-visible.view-grid .portfolio-grid {
+    opacity: 1;
+}
+
+.portfolio-dual-container.view-visible.view-grid .portfolio-gallery,
+.portfolio-dual-container.view-visible.view-grid .portfolio-close-btn {
+    opacity: 0;
+}
+
+/* Carousel view: show carousel and close button, hide grid */
+.portfolio-dual-container.view-visible.view-carousel .portfolio-gallery,
+.portfolio-dual-container.view-visible.view-carousel .portfolio-close-btn {
+    opacity: 1;
+}
+
+.portfolio-dual-container.view-visible.view-carousel .portfolio-grid {
+    opacity: 0;
+}
+
+/* ==========================================================================
+   Display Control - Show/hide based on view (after fade completes)
+   ========================================================================== */
+
+/* Grid view active */
+.portfolio-dual-container.view-grid .portfolio-gallery {
+    display: none;
+}
+
+.portfolio-dual-container.view-grid .portfolio-grid {
+    display: block;
+}
+
+.portfolio-dual-container.view-grid .portfolio-close-btn {
+    display: none;
+}
+
+/* Carousel view active */
+.portfolio-dual-container.view-carousel .portfolio-gallery {
+    display: flex;
+}
+
+.portfolio-dual-container.view-carousel .portfolio-grid {
+    display: none;
+}
+
+.portfolio-dual-container.view-carousel .portfolio-close-btn {
+    display: flex;
+}
+
+/* ==========================================================================
+   Close Button
+   ========================================================================== */
+
+.portfolio-close-btn {
+    position: fixed;
+    top: 92px; /* Below header, aligned with content */
+    right: 24px;
+    z-index: 100;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    width: 44px;
+    height: 44px;
+    padding: 0;
+
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    cursor: pointer;
+
+    transition: background-color 0.2s ease, transform 0.2s ease, opacity 0.3s ease-out;
+}
+
+.portfolio-close-btn:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: scale(1.05);
+}
+
+.portfolio-close-btn:focus {
+    outline: 2px solid var(--color-primary-text);
+    outline-offset: 2px;
+}
+
+.portfolio-close-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: var(--color-primary-text);
+}
+
+/* Mobile adjustments */
+@media (max-width: 767px) {
+    .portfolio-close-btn {
+        top: 72px; /* Smaller header on mobile */
+        right: 16px;
+        width: 40px;
+        height: 40px;
+    }
+
+    .portfolio-close-btn svg {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+/* ==========================================================================
+   Grid View - Masonry layout with horizontal ordering
+   ========================================================================== */
+
+.portfolio-grid {
+    --portfolio-grid-gap: 32px; /* Space between images */
+    --portfolio-grid-margin: 24px; /* Margin around the grid */
+
+    display: none;
+    max-width: 1800px;
+    margin: 0 var(--portfolio-grid-margin); /* Use margin instead of padding for symmetry */
+    padding-top: 20px; /* Top aligned with carousel */
+    box-sizing: border-box;
+}
+
+/* Center on very wide screens */
+@media (min-width: 1848px) {
+    .portfolio-grid {
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+/* Grid sizer determines column width for Masonry */
+.portfolio-grid-sizer,
+.portfolio-grid-item {
+    /* 3 columns with gutter: (100% - gutter*2) / 3 */
+    width: calc((100% - var(--portfolio-grid-gap) * 2) / 3);
+}
+
+/* Gutter sizer for Masonry - ensures gutters match CSS variable */
+.portfolio-gutter-sizer {
+    width: var(--portfolio-grid-gap);
+}
+
+.portfolio-grid-item {
+    margin-bottom: var(--portfolio-grid-gap);
+    cursor: pointer;
+}
+
+.portfolio-grid-item:hover {
+    opacity: 0.85;
+}
+
+.portfolio-grid-item:focus {
+    outline: 2px solid var(--color-primary-text);
+    outline-offset: 2px;
+}
+
+.portfolio-grid-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Responsive: 1 column on mobile - full bleed, edge-to-edge images */
+@media (max-width: 767px) {
+    .portfolio-grid {
+        margin-left: 0;
+        margin-right: 0;
+        padding-top: 0;
+    }
+
+    .portfolio-grid-sizer,
+    .portfolio-grid-item {
+        width: 100%;
+        margin-bottom: 0; /* No gap between images */
+    }
+}
+
+/* Responsive: 2 columns on tablet */
+@media (min-width: 768px) and (max-width: 1199px) {
+    .portfolio-grid-sizer,
+    .portfolio-grid-item {
+        /* 2 columns with gutter */
+        width: calc((100% - var(--portfolio-grid-gap)) / 2);
+    }
+}
+
+/* Responsive: 3 columns on desktop (default above) */
+@media (min-width: 1200px) {
+    .portfolio-grid-sizer,
+    .portfolio-grid-item {
+        width: calc((100% - var(--portfolio-grid-gap) * 2) / 3);
+    }
+}
+
+/* ==========================================================================
+   Grid View - Override Fixed Positioning
+   ========================================================================== */
+
+/* Override fixed positioning when in grid view so page scrolls normally */
+.portfolio-dual-container.view-grid {
+    position: relative;
+    top: auto;
+    bottom: auto;
+    overflow: visible;
+    min-height: calc(100vh - 80px);
+}

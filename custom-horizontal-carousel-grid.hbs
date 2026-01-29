@@ -1,0 +1,42 @@
+{{!--
+    Custom template: Horizontal Carousel with Grid View
+    Standalone template with dual-view: carousel (default) and grid (#grid hash)
+    Select in Ghost Admin: Page Settings > Template > Horizontal Carousel Grid
+--}}
+<!DOCTYPE html>
+<html lang="{{@site.locale}}">
+
+<head>
+    {{> "portfolio-head"}}
+</head>
+
+<body class="{{body_class}} is-head-{{#match @custom.navigation_layout "Logo on the left"}}left-logo{{else match @custom.navigation_layout "Logo in the middle"}}middle-logo{{else}}stacked{{/match}}{{#match @custom.title_font "=" "Elegant serif"}} has-serif-title{{/match}}{{#match @custom.body_font "=" "Elegant serif"}} has-serif-body{{/match}}">
+
+    {{> "site-header"}}
+
+    {{#post}}
+    <main class="portfolio-container portfolio-dual-container" role="region" aria-label="{{title}} gallery">
+
+        {{!-- Close button - returns to grid view --}}
+        <button class="portfolio-close-btn" aria-label="Close carousel, return to grid view" title="Close (Esc)">
+            {{> "icons/close"}}
+        </button>
+
+        {{!-- Carousel View (default) --}}
+        <div class="portfolio-gallery gh-content" id="portfolio-carousel" role="region" aria-label="{{title}} carousel">
+            {{content}}
+        </div>
+
+        {{!-- Grid View (populated by JavaScript from carousel images) --}}
+        <div class="portfolio-grid" id="portfolio-grid" role="region" aria-label="{{title}} grid" aria-hidden="true">
+        </div>
+
+    </main>
+    {{/post}}
+
+{{> "portfolio-scripts"}}
+
+{{ghost_foot}}
+
+</body>
+</html>
